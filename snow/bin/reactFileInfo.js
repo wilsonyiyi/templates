@@ -1,7 +1,7 @@
 export function getFileName(fileType, dirname) {
   return {
     entryFile: "index.tsx",
-    styleFile: `${dirname}.module.css`,
+    styleFile: `${dirname}.module.less`,
     componentFile: `${dirname}.tsx`,
   }[fileType];
 }
