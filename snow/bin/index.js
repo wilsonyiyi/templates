@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdir, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { program } from "commander";
 import Handlebars from "handlebars";
 import shelljs from "shelljs";
@@ -8,6 +8,7 @@ import chalk from "chalk";
 import prompts from "prompts";
 import ora from "ora";
 import { version, getPromptOptions, gitRemoteMap } from "./config.js";
+import { getFileContent, getFileName } from "./reactFileInfo.js";
 
 program
   .name("snow")
@@ -28,6 +29,27 @@ program
     await gitClone(remote, projectName);
     updatePackageJson(projectName);
     await startProject(projectName);
+  });
+
+// 生成资源目录和文件，现在只支持react项目
+program
+  .command("g")
+  .description("generate resource directory and files")
+  .argument("dirname", "directory name")
+  .action((dirname) => {
+    const fileTypes = ['entryFile',  'styleFile', 'componentFile'];
+    mkdirSync(`${process.cwd()}/${dirname}`);
+    fileTypes.forEach((fileType) => {
+      const fileName = getFileName(fileType, dirname);
+      const filePath = `${process.cwd()}/${dirname}/${fileName}`;
+      if (existsSync(filePath)) {
+        console.log(chalk.red(`${filePath} 文件已存在`));
+        return;
+      }
+      writeFileSync(filePath, getFileContent(fileType, dirname), { encoding: "utf-8", flag: "w" });
+
+      console.log(chalk.green(`${filePath} 文件创建成功`));
+    });
   });
 
 program.parse();
