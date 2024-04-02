@@ -1,4 +1,4 @@
-export const version = "1.0.3";
+export const version = "1.0.4";
 
 export const gitRemoteMap = new Map([
   ["vite-react", "github:wilsonyiyi/templates/vite-react#main"],
